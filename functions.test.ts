@@ -1,14 +1,15 @@
 const {shuffleArray} = require('./utils')
 
+
+let testArr = [1,2,3,4,5]
+
 describe('shuffleArray should', () => {
     test('Should return an array', () => {
-        let shuffledArray = shuffleArray(shuffleArray.array)
-        expect(typeof shuffledArray).toBe('array')
+        expect(Array.isArray(shuffleArray(testArr))).toBe(true)
     })
 
-    test('Should return Copy', () => {
-        let shuffledArray = shuffleArray(shuffleArray.arrCopy)
-        expect(shuffledArray).toBe('arrCopy')
+    test('Make sure all the same items are in the array', () => {
+        expect(shuffleArray(testArr)).toEqual(expect.arrayContaining(testArr))
     })
 
 })
