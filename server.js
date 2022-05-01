@@ -6,9 +6,18 @@ const {shuffleArray} = require('./utils')
 
 app.use(express.json())
 
+var Rollbar = require('rollbar')
+var rollbar = new Rollbar({
+  accessToken: 'c90d5c67f489468c8b1cb1bbdcc3d422',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+})
+
+rollbar.log('Hello world!')
 
 app.get('/styles', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.css'))
+    rollbar.info('css file served')
 })
 
 
@@ -16,10 +25,12 @@ app.get('/styles', (req, res) => {
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'))
+    rollbar.info('html file served')
 })
 
 app.get('/js', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.js'))
+    rollbar.info('server doing its thing')
 })
 
 app.get('/api/robots', (req, res) => {
@@ -29,6 +40,7 @@ app.get('/api/robots', (req, res) => {
         console.log('ERROR GETTING BOTS', error)
         res.sendStatus(400)
     }
+    rollbar.info('Bots served up baby!')
 })
 
 app.get('/api/robots/five', (req, res) => {
@@ -65,7 +77,7 @@ app.post('/api/duel', (req, res) => {
             playerRecord.losses++
             res.status(200).send('You lost!')
         } else {
-            playerRecord.losses++
+            playerRecord.wins++
             res.status(200).send('You won!')
         }
     } catch (error) {
@@ -85,6 +97,7 @@ app.get('/api/player', (req, res) => {
 
 const port = process.env.PORT || 3000
 
+app.use(rollbar.errorHandler())
 app.listen(port, () => {
   console.log(`Listening on port ${port}`)
 })
